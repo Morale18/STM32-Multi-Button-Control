@@ -1,70 +1,93 @@
-# STM32 LED Control with External Interrupts and SysTick Timing
+STM32L476 Real-Time Event-Driven LED Control System
+Bare-Metal Firmware with External Interrupts, SysTick Timing, and Custom Debouncing
+Overview
+This project implements a real-time, event-driven control system on the STM32L476 microcontroller, demonstrating bare-metal firmware development without relying on STM32 HAL drivers.
 
-## Overview
-This project demonstrates how to control multiple LEDs on an STM32L476 microcontroller using:
-- **External interrupts (EXTI)** for push-button inputs.
-- **SysTick** for precise millisecond timing.
-- **Custom system clock configuration**.
+It uses:
 
-It is designed as a bare-metal, register-level implementation without relying on the STM32 HAL for GPIO, EXTI, or SysTick configuration.
+External Interrupts (EXTI) for responsive, non-blocking user input.
 
-## Hardware
-- **MCU**: STM32L476 (Nucleo-L476RG board)
-- **LEDs**:
-  - PA5 (LED1)
-  - PA6 (LED2)
-  - PA7 (LED3)
-  - PB6 (LED4)
-- **Push Buttons**:
-  - PA1 → Increase blink delay
-  - PA4 → Cycle through active LED
-  - PB0 → Reset blink delay to 500 ms
+SysTick for precise 1 ms system timing.
 
-## Features
-1. **Adjustable Blink Delay**
-   - Button on PA1 increases the LED blink delay by 500 ms.
-   - Wraps back to 500 ms after exceeding 2000 ms.
+Custom debouncing for reliable input signal processing.
 
-2. **Active LED Selection**
-   - Button on PA4 cycles through LEDs 1 → 4.
-   - Uses SysTick-based software debounce for stable input.
+Direct register access for GPIO, EXTI, and SysTick configuration.
 
-3. **Delay Reset**
-   - Button on PB0 resets the blink delay to 500 ms.
+Custom clock initialization for deterministic timing performance.
 
-4. **SysTick Timing**
-   - Configured to generate an interrupt every 1 ms.
-   - Provides a precise time base for delays and debouncing.
+The system dynamically manages multiple outputs (LEDs) based on low-latency, interrupt-driven events, simulating a simplified real-time scheduler for hardware control.
 
-5. **Custom System Clock**
-   - Configured via `sysclock.c` (provided by professor).
-   - Runs at 80 MHz.
+Hardware
+MCU: STM32L476RG (Nucleo-L476RG board)
 
+Outputs (LEDs):
 
-## How It Works
-1. **GPIO Initialization**  
-   Configures LED pins as high-speed push-pull outputs.  
-   Configures button pins as inputs.
+PA5 – LED1
 
-2. **EXTI Setup**  
-   Maps EXTI lines to the correct ports/pins.  
-   Configures falling-edge detection for buttons.  
-   Enables NVIC interrupts for EXTI lines 0, 1, and 4.
+PA6 – LED2
 
-3. **SysTick Setup**  
-   Configured for a 1 ms tick at 80 MHz.  
-   Increments a global `msTicks` counter used for delays and debouncing.
+PA7 – LED3
 
-4. **Main Loop**  
-   - Waits for the current `delay_time` in ms.  
-   - Toggles the currently active LED.
+PB6 – LED4
 
-## Usage
-- Press **PA1** to increase the blink delay.
-- Press **PA4** to switch to the next LED.
-- Press **PB0** to reset the delay to 500 ms.
+Inputs (Push Buttons via EXTI):
 
-## Notes
-- This repository contains only the custom source (`Src/`) and header (`Inc/`) files for review purposes.
-- CubeMX-generated HAL/CMSIS driver files have been omitted.
-- Written for educational purposes to demonstrate register-level STM32 programming.
+PA1 → Increase blink delay (+500 ms)
+
+PA4 → Cycle active LED (1 → 4)
+
+PB0 → Reset blink delay to 500 ms
+
+Core Features
+1. Interrupt-Driven Input Handling
+Configures EXTI lines for hardware-level falling-edge detection.
+
+Maps EXTI to GPIO ports via SYSCFG configuration registers.
+
+Uses NVIC priority settings for predictable event latency.
+
+2. SysTick-Based Timing
+SysTick configured for a 1 ms tick at 80 MHz.
+
+Global millisecond counter for non-blocking delays and debounce timing.
+
+Timing control ensures stable LED blinking without blocking CPU execution.
+
+3. Custom Input Debouncing
+Implements software debounce algorithm using SysTick timestamps.
+
+Ensures signal integrity in mechanical button presses without HAL libraries.
+
+4. Dynamic Output Control
+LED Blink Delay: Adjustable in real-time (500 ms → 2000 ms, wraps around).
+
+LED Selection: Cycle through active LED channels with EXTI button press.
+
+Delay Reset: Instant reset to 500 ms via dedicated button.
+
+5. Bare-Metal Register-Level Implementation
+No HAL calls for GPIO, EXTI, SysTick — all configured via direct register writes.
+
+Clear separation of low-level drivers from application logic.
+
+Applications
+While demonstrated with LEDs, the architecture is adaptable to:
+
+Motor control loops with precise timing.
+
+Multi-sensor event handling.
+
+Power management wake/sleep control.
+
+User interface button panels in industrial systems.
+
+Technical Highlights for Recruiters/Engineers
+Direct register-level control of GPIO, EXTI, SysTick.
+
+Real-time, non-blocking event handling with deterministic latency.
+
+Hardware abstraction kept minimal for performance and transparency.
+
+Custom clock configuration for optimal timing resolution.
+
+Scalable design — LED logic can be replaced with actuators, displays, or communication modules without changing core event/timing logic.
