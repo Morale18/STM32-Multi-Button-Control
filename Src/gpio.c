@@ -2,7 +2,7 @@
 #include "gpio.h"
 #include "exti.h"
 
-#define LED_PIN1	  5 //PA5
+#define LED_PIN1	5 //PA5
 #define LED_PIN2    6 //PA6
 #define LED_PIN3    7 //PA7
 #define LED_PIN4    6 //PB6
@@ -40,5 +40,6 @@ void toggle_led(void)
         case 4: GPIOB->ODR ^= (1UL<<LED_PIN4); break;
     }
 }
+
 
 
