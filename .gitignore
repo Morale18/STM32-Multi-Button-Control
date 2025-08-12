@@ -1,0 +1,10 @@
+# Drivers
+includes/
+
+# STM32CubeIDE 
+*.Id
+Startup/
+Debug/
+Binaries/
+Src/syscalls.c
+Src/sysmem.c
