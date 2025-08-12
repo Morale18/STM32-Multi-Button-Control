@@ -1,13 +1,12 @@
-/*
- * gpio.h
- *
- *  Created on: Aug 12, 2025
- *      Author: JUSTIN
- */
 
 #ifndef GPIO_H_
 #define GPIO_H_
+#include <stdint.h>
+
+void init_GPIOs(void);
+void toggle_leds(void);
 
 
 
 #endif /* GPIO_H_ */
+
